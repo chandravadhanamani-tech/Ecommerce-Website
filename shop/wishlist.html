@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load shop_filters %}
+
+{% block title %}My Wishlist — ShopEase{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="page-title mb-4"><i class="bi bi-heart me-2"></i>My Wishlist
+        {% if wishlist_items %}<span class="badge bg-danger ms-2">{{ wishlist_items.count }}</span>{% endif %}
+    </h2>
+
+    {% if wishlist_items %}
+    <div class="row g-4">
+        {% for item in wishlist_items %}
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="product-card h-100">
+                <a href="{{ item.product.get_absolute_url }}" class="product-image-link">
+                    <div class="product-image-wrap">
+                        {% if item.product.image %}
+                        <img src="{{ item.product.image.url }}" class="product-img" alt="{{ item.product.name }}" />
+                        {% else %}
+                        <div class="product-img-placeholder"><i class="bi bi-image text-muted fs-1"></i></div>
+                        {% endif %}
+                    </div>
+                </a>
+                <div class="product-body">
+                    <div class="product-category">{{ item.product.category.name }}</div>
+                    <h6 class="product-name">
+                        <a href="{{ item.product.get_absolute_url }}" class="text-decoration-none text-dark">{{ item.product.name }}</a>
+                    </h6>
+                    <div class="product-price mb-2">{{ item.product.effective_price|currency }}</div>
+
+                    <div class="d-flex gap-2">
+                        {% if item.product.in_stock %}
+                        <form method="post" action="{% url 'shop:add_to_cart' item.product.pk %}" class="flex-grow-1">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="1" />
+                            <button type="submit" class="btn btn-add-cart w-100 btn-sm">
+                                <i class="bi bi-bag-plus"></i> Add
+                            </button>
+                        </form>
+                        {% endif %}
+                        <form method="post" action="{% url 'shop:toggle_wishlist' item.product.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger btn-sm" title="Remove from Wishlist">
+                                <i class="bi bi-heart-fill"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state text-center py-5">
+        <div style="font-size:4rem;">💝</div>
+        <h4 class="mt-3">Your wishlist is empty</h4>
+        <p class="text-muted">Save products you love by clicking the heart icon.</p>
+        <a href="{% url 'shop:product_list' %}" class="btn btn-accent mt-2">Explore Products</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
