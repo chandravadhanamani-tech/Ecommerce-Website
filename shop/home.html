@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static shop_filters %}
+
+{% block title %}ShopEase — Premium Shopping Experience{% endblock %}
+
+{% block category_bar %}
+<a href="{% url 'shop:product_list' %}" class="category-pill">All</a>
+{% for cat in categories %}
+<a href="{% url 'shop:product_list_by_category' cat.slug %}" class="category-pill">{{ cat.name }}</a>
+{% endfor %}
+{% endblock %}
+
+{% block content %}
+
+<!-- ─── Hero Section ─── -->
+<section class="hero-section">
+    <div class="hero-bg-animation"></div>
+    <div class="container">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-6" data-aos="fade-right">
+                <span class="hero-eyebrow">🛍️ New Season Arrivals</span>
+                <h1 class="hero-title">
+                    Discover <span class="gradient-text">Premium</span><br />Products at Best Prices
+                </h1>
+                <p class="hero-subtitle">Shop from thousands of curated products with free delivery on orders above ₹500.</p>
+                <div class="d-flex gap-3 flex-wrap mt-4">
+                    <a href="{% url 'shop:product_list' %}" class="btn btn-accent btn-lg hero-cta">
+                        <i class="bi bi-bag me-2"></i>Shop Now
+                    </a>
+                    <a href="{% url 'shop:product_list' %}?sort=-price" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-star me-2"></i>Featured
+                    </a>
+                </div>
+                <div class="hero-stats d-flex gap-4 mt-5">
+                    <div class="stat-item">
+                        <span class="stat-number">10K+</span>
+                        <span class="stat-label">Products</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-number">50K+</span>
+                        <span class="stat-label">Happy Customers</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-number">4.9★</span>
+                        <span class="stat-label">Rating</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center d-none d-lg-block">
+                <div class="hero-image-wrapper">
+                    <div class="hero-floating-card card-1">
+                        <i class="bi bi-truck text-success me-2"></i> Free Delivery
+                    </div>
+                    <div class="hero-floating-card card-2">
+                        <i class="bi bi-shield-check text-primary me-2"></i> Secure Checkout
+                    </div>
+                    <div class="hero-floating-card card-3">
+                        <i class="bi bi-arrow-repeat text-warning me-2"></i> Easy Returns
+                    </div>
+                    <div class="hero-blob"></div>
+                    <i class="bi bi-bag-heart-fill hero-icon-large"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ─── Trust Badges ─── -->
+<section class="trust-section py-4">
+    <div class="container">
+        <div class="row g-3">
+            <div class="col-6 col-md-3">
+                <div class="trust-badge">
+                    <i class="bi bi-truck-front-fill fs-3 text-accent"></i>
+                    <div>
+                        <div class="fw-600">Free Shipping</div>
+                        <small class="text-muted">Orders above ₹500</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="trust-badge">
+                    <i class="bi bi-shield-lock-fill fs-3 text-accent"></i>
+                    <div>
+                        <div class="fw-600">Secure Payments</div>
+                        <small class="text-muted">100% Protected</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="trust-badge">
+                    <i class="bi bi-arrow-counterclockwise fs-3 text-accent"></i>
+                    <div>
+                        <div class="fw-600">Easy Returns</div>
+                        <small class="text-muted">30 Day Policy</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="trust-badge">
+                    <i class="bi bi-headset fs-3 text-accent"></i>
+                    <div>
+                        <div class="fw-600">24/7 Support</div>
+                        <small class="text-muted">Always here to help</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ─── Categories ─── -->
+<section class="py-5 bg-subtle">
+    <div class="container">
+        <div class="section-header text-center mb-4">
+            <span class="section-tag">Browse By</span>
+            <h2 class="section-title">Shop by Category</h2>
+        </div>
+        <div class="row g-3 justify-content-center">
+            {% for category in categories %}
+            <div class="col-6 col-sm-4 col-lg-2">
+                <a href="{% url 'shop:product_list_by_category' category.slug %}" class="category-card text-decoration-none">
+                    <div class="category-icon">
+                        {% if 'electronic' in category.name|lower %}🖥️
+                        {% elif 'cloth' in category.name|lower or 'fashion' in category.name|lower %}👗
+                        {% elif 'book' in category.name|lower %}📚
+                        {% elif 'home' in category.name|lower or 'kitchen' in category.name|lower %}🏠
+                        {% elif 'sport' in category.name|lower %}⚽
+                        {% elif 'beauty' in category.name|lower %}💄
+                        {% elif 'toy' in category.name|lower %}🧸
+                        {% else %}🛍️{% endif %}
+                    </div>
+                    <div class="category-name">{{ category.name }}</div>
+                    <div class="category-count text-muted small">{{ category.products.count }} items</div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ─── Featured Products ─── -->
+{% if featured_products %}
+<section class="py-5">
+    <div class="container">
+        <div class="section-header d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <span class="section-tag">Handpicked</span>
+                <h2 class="section-title mb-0">Featured Products</h2>
+            </div>
+            <a href="{% url 'shop:product_list' %}" class="btn btn-outline-accent btn-sm">View All <i class="bi bi-arrow-right ms-1"></i></a>
+        </div>
+        <div class="row g-4">
+            {% for product in featured_products %}
+            <div class="col-6 col-md-4 col-lg-3">
+                {% include 'shop/partials/product_card.html' with product=product %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ─── Latest Products ─── -->
+<section class="py-5 bg-subtle">
+    <div class="container">
+        <div class="section-header d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <span class="section-tag">Just In</span>
+                <h2 class="section-title mb-0">Latest Products</h2>
+            </div>
+            <a href="{% url 'shop:product_list' %}?sort=-created_at" class="btn btn-outline-accent btn-sm">View All <i class="bi bi-arrow-right ms-1"></i></a>
+        </div>
+        <div class="row g-4">
+            {% for product in latest_products %}
+            <div class="col-6 col-md-4 col-lg-3">
+                {% include 'shop/partials/product_card.html' with product=product %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ─── Promotional Banner ─── -->
+<section class="promo-banner py-5">
+    <div class="container">
+        <div class="promo-card">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2 class="promo-title">🎉 Special Offer!</h2>
+                    <p class="promo-text">Get FREE shipping on your first order. Use code <strong>FIRST50</strong> at checkout.</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <a href="{% url 'shop:product_list' %}" class="btn btn-light btn-lg fw-600">Shop Now →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
