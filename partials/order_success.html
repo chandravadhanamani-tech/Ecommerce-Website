@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load shop_filters %}
+
+{% block title %}Order Confirmed — ShopEase{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="success-container text-center">
+        <div class="success-animation">
+            <div class="success-circle">
+                <i class="bi bi-check-lg success-icon"></i>
+            </div>
+        </div>
+        <h1 class="success-title mt-4">Order Placed Successfully! 🎉</h1>
+        <p class="text-muted mt-2">Thank you for shopping with ShopEase. Your order has been confirmed.</p>
+
+        {% if order %}
+        <div class="order-success-card mt-4">
+            <div class="row g-4 text-start">
+                <div class="col-md-6">
+                    <h6 class="text-muted mb-1">Order Number</h6>
+                    <p class="fw-700 text-accent fs-5">#{{ order.order_number }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-muted mb-1">Order Date</h6>
+                    <p class="fw-600">{{ order.created_at|date:"d M Y, h:i A" }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-muted mb-1">Total Paid</h6>
+                    <p class="fw-700 text-success fs-5">{{ order.total_price|currency }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-muted mb-1">Payment Status</h6>
+                    <span class="badge bg-success">{{ order.get_payment_status_display }}</span>
+                </div>
+                <div class="col-12">
+                    <h6 class="text-muted mb-1">Delivery Address</h6>
+                    <p class="mb-0">{{ order.address }}, {{ order.city }}, {{ order.state }} — {{ order.pincode }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex gap-3 justify-content-center flex-wrap mt-4">
+            <a href="{% url 'shop:order_detail' order.order_number %}" class="btn btn-accent btn-lg">
+                <i class="bi bi-box-seam me-2"></i>Track Order
+            </a>
+            <a href="{% url 'shop:product_list' %}" class="btn btn-outline-secondary btn-lg">
+                <i class="bi bi-bag me-2"></i>Continue Shopping
+            </a>
+        </div>
+        {% else %}
+        <div class="d-flex gap-3 justify-content-center mt-4">
+            <a href="{% url 'shop:order_history' %}" class="btn btn-accent btn-lg">View My Orders</a>
+            <a href="{% url 'shop:product_list' %}" class="btn btn-outline-secondary btn-lg">Continue Shopping</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
