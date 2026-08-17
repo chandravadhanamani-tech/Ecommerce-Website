@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static shop_filters %}
+
+{% block title %}Checkout — ShopEase{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="page-title mb-4"><i class="bi bi-credit-card me-2"></i>Checkout</h2>
+
+    <!-- Progress Steps -->
+    <div class="checkout-steps mb-4">
+        <div class="step active"><span class="step-num">1</span><span class="step-label">Cart</span></div>
+        <div class="step-line active"></div>
+        <div class="step active"><span class="step-num">2</span><span class="step-label">Details</span></div>
+        <div class="step-line"></div>
+        <div class="step"><span class="step-num">3</span><span class="step-label">Payment</span></div>
+        <div class="step-line"></div>
+        <div class="step"><span class="step-num">4</span><span class="step-label">Confirm</span></div>
+    </div>
+
+    <form method="post" id="checkoutForm">
+        {% csrf_token %}
+        <div class="row g-4">
+            <!-- Shipping Details -->
+            <div class="col-lg-7">
+                <div class="checkout-card">
+                    <h5 class="checkout-section-title"><i class="bi bi-person me-2"></i>Personal Information</h5>
+                    <div class="row g-3">
+                        <div class="col-12">{{ form.full_name.label_tag }}{{ form.full_name }}</div>
+                        <div class="col-md-6">{{ form.email.label_tag }}{{ form.email }}</div>
+                        <div class="col-md-6">{{ form.phone.label_tag }}{{ form.phone }}</div>
+                    </div>
+                </div>
+
+                <div class="checkout-card mt-3">
+                    <h5 class="checkout-section-title"><i class="bi bi-geo-alt me-2"></i>Shipping Address</h5>
+                    <div class="row g-3">
+                        <div class="col-12">{{ form.address.label_tag }}{{ form.address }}</div>
+                        <div class="col-md-6">{{ form.city.label_tag }}{{ form.city }}</div>
+                        <div class="col-md-6">{{ form.state.label_tag }}{{ form.state }}</div>
+                        <div class="col-md-6">{{ form.pincode.label_tag }}{{ form.pincode }}</div>
+                        <div class="col-md-6">{{ form.country.label_tag }}{{ form.country }}</div>
+                    </div>
+                </div>
+
+                <div class="checkout-card mt-3">
+                    <h5 class="checkout-section-title"><i class="bi bi-chat-text me-2"></i>Order Notes</h5>
+                    {{ form.notes }}
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-5">
+                <div class="order-summary-card sticky-top" style="top: 80px;">
+                    <h5 class="summary-title">Your Order</h5>
+                    <div class="checkout-items">
+                        {% for item in cart_items %}
+                        <div class="checkout-item d-flex gap-3 align-items-center mb-3">
+                            {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" width="50" height="50" style="object-fit:cover;border-radius:8px;" alt="{{ item.product.name }}" />
+                            {% endif %}
+                            <div class="flex-grow-1">
+                                <div class="fw-500 small">{{ item.product.name }}</div>
+                                <div class="text-muted small">Qty: {{ item.quantity }}</div>
+                            </div>
+                            <div class="fw-600">{{ item.total_price|currency }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <hr />
+                    <div class="summary-row"><span>Subtotal</span><span>{{ cart.subtotal|currency }}</span></div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span class="{% if cart.subtotal >= 500 %}text-success fw-600{% endif %}">
+                            {% if cart.subtotal >= 500 %}FREE{% else %}₹50.00{% endif %}
+                        </span>
+                    </div>
+                    <hr />
+                    <div class="summary-total">
+                        <span>Total</span>
+                        <span>{% if cart.subtotal >= 500 %}{{ cart.subtotal|currency }}{% else %}{{ cart.total|currency }}{% endif %}</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-accent btn-lg w-100 mt-3">
+                        <i class="bi bi-lock me-2"></i>Place Order & Pay
+                    </button>
+                    <div class="text-center mt-2">
+                        <small class="text-muted"><i class="bi bi-shield-lock me-1"></i>256-bit SSL encrypted</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
